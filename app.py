@@ -53,18 +53,11 @@ except Exception as e:
 
 # engine/news_stream.py
 try:
-    from engine.news_stream import (
-        get_disruption_events,
-        filter_by_region,
-        fetch_weather_open_meteo,
-        parse_weather_risk,
-    )
+    from engine.news_stream import get_disruption_events, filter_by_region
     _NEWS_OK = True
-    _WEATHER_OK = True
 except Exception as e:
     logger.warning(f"engine/news_stream.py import failed: {e}")
     _NEWS_OK = False
-    _WEATHER_OK = False
 
 # engine/risk_model.py
 try:
@@ -204,9 +197,9 @@ def render_sidebar() -> None:
     # ── Navigation ──
     st.session_state["page"] = st.sidebar.radio(
         "📌 Navigation",
-        ["Dashboard", "Map View", "Intelligence Feed", "Scenario Lab", "PDF Report", "Weather Monitor"],
+        ["Dashboard", "Map View", "Intelligence Feed", "Scenario Lab", "PDF Report"],
         index=["Dashboard", "Map View", "Intelligence Feed",
-               "Scenario Lab", "PDF Report", "Weather Monitor"].index(
+               "Scenario Lab", "PDF Report"].index(
             st.session_state.get("page", "Dashboard")
         ),
     )
@@ -226,7 +219,6 @@ def render_sidebar() -> None:
         "Map":          _MAP_OK,
         "PDF":          _PDF_OK,
         "News":         _NEWS_OK,
-        "Weather":      _WEATHER_OK,
     }
     for module, ok in status_flags.items():
         icon = "🟢" if ok else "🔴"
@@ -604,143 +596,6 @@ def page_pdf(data: pl.DataFrame) -> None:
             except Exception as e:
                 logger.error(f"PDF generation error: {e}")
                 st.error(f"PDF generation failed: {e}")
-
-
-# ── Page: Weather Monitor ─────────────────────────────────────────────────────
-def page_weather(data: pl.DataFrame) -> None:
-    st.title("🌦️ Shipping Route Weather Monitor")
-    st.caption("Powered by Open-Meteo · Free · No API key required")
-    st.markdown("---")
-
-    has_geo = "lat" in data.columns and "lon" in data.columns
-
-    # ── Supplier picker (if CSV has lat/lon) ──────────────────────────────────
-    if has_geo and not data.is_empty():
-        sup_col = "supplier" if "supplier" in data.columns else data.columns[0]
-        supplier_list = data[sup_col].to_list()
-
-        st.subheader("📍 Check Weather at Supplier Location")
-        selected_supplier = st.selectbox("Select Supplier", supplier_list)
-
-        row = data.filter(pl.col(sup_col) == selected_supplier).row(0, named=True)
-        lat = float(row["lat"])
-        lon = float(row["lon"])
-
-        region_col = next((c for c in ["region", "supplier_region"] if c in data.columns), None)
-        region_val = row.get(region_col, "—") if region_col else "—"
-
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Supplier",  selected_supplier)
-        c2.metric("Region",    str(region_val))
-        c3.metric("Coords",    f"{lat:.3f}, {lon:.3f}")
-
-    else:
-        # Manual lat/lon entry if no geo data in CSV
-        st.info("No lat/lon in dataset — enter coordinates manually.")
-        col1, col2 = st.columns(2)
-        with col1:
-            lat = st.number_input("Latitude",  value=24.86, format="%.4f")
-        with col2:
-            lon = st.number_input("Longitude", value=67.01, format="%.4f")
-
-    st.markdown("---")
-
-    # ── Fetch & Display ───────────────────────────────────────────────────────
-    if st.button("🔄 Fetch Weather Conditions"):
-        if not _WEATHER_OK:
-            st.error("Weather module not loaded. Check engine/news_stream.py")
-            return
-
-        with st.spinner("Fetching from Open-Meteo..."):
-            try:
-                raw     = fetch_weather_open_meteo(lat, lon)
-                weather = parse_weather_risk(raw)
-
-                if not weather:
-                    st.error("Could not parse weather data.")
-                    return
-
-                # ── KPI Row ──
-                st.subheader("📊 Current Conditions")
-                m1, m2, m3, m4 = st.columns(4)
-                m1.metric("🌡️ Temperature",      f"{weather['temperature']} °C" if weather['temperature'] is not None else "N/A")
-                m2.metric("💨 Wind Speed",        f"{weather['windspeed']} km/h")
-                m3.metric("🌧️ Precip. Prob.",     f"{weather['precip_prob']} %")
-                m4.metric("☁️ Condition",         weather["condition"])
-
-                # ── Shipping Risk Banner ──
-                st.markdown("### 🚢 Shipping Risk Assessment")
-                risk = weather["risk_level"]
-                if "SEVERE" in risk:
-                    st.error(f"{risk} — Severe weather. Shipping disruption highly likely.")
-                elif "HIGH" in risk:
-                    st.warning(f"{risk} — Adverse conditions. Expect significant delays.")
-                elif "MODERATE" in risk:
-                    st.info(f"{risk} — Some weather impact possible. Monitor closely.")
-                else:
-                    st.success(f"{risk} — Conditions are favourable for shipping.")
-
-                # ── Hourly Wind Chart ──
-                hourly = raw.get("hourly", {})
-                wind_vals = hourly.get("windspeed_10m", [])
-                time_vals = hourly.get("time", [])
-
-                if wind_vals and time_vals:
-                    import plotly.graph_objects as go
-                    fig = go.Figure()
-                    fig.add_trace(go.Scatter(
-                        x=time_vals[:24],
-                        y=wind_vals[:24],
-                        mode="lines+markers",
-                        line=dict(color="#00FF41", width=2),
-                        marker=dict(size=4),
-                        name="Wind Speed (km/h)",
-                        fill="tozeroy",
-                        fillcolor="rgba(0,255,65,0.1)",
-                    ))
-                    fig.update_layout(
-                        title="24-Hour Wind Speed Forecast",
-                        xaxis_title="Time",
-                        yaxis_title="Wind Speed (km/h)",
-                        paper_bgcolor="rgba(0,0,0,0)",
-                        plot_bgcolor="rgba(0,0,0,0)",
-                        font_color="#00FF41",
-                        xaxis=dict(gridcolor="#1A1A1A", linecolor="#00FF41"),
-                        yaxis=dict(gridcolor="#1A1A1A", linecolor="#00FF41"),
-                        margin=dict(t=40, b=40, l=40, r=40),
-                    )
-                    st.plotly_chart(fig, use_container_width=True)
-
-                # ── Precip Probability Chart ──
-                precip_vals = hourly.get("precipitation_probability", [])
-                if precip_vals and time_vals:
-                    import plotly.graph_objects as go
-                    fig2 = go.Figure()
-                    fig2.add_trace(go.Bar(
-                        x=time_vals[:24],
-                        y=precip_vals[:24],
-                        marker_color=[
-                            "#FF4444" if v > 80 else "#FFA500" if v > 50 else "#00FF41"
-                            for v in precip_vals[:24]
-                        ],
-                        name="Precipitation Probability (%)",
-                    ))
-                    fig2.update_layout(
-                        title="24-Hour Precipitation Probability",
-                        xaxis_title="Time",
-                        yaxis_title="Probability (%)",
-                        paper_bgcolor="rgba(0,0,0,0)",
-                        plot_bgcolor="rgba(0,0,0,0)",
-                        font_color="#00FF41",
-                        xaxis=dict(gridcolor="#1A1A1A", linecolor="#00FF41"),
-                        yaxis=dict(gridcolor="#1A1A1A", linecolor="#00FF41"),
-                        margin=dict(t=40, b=40, l=40, r=40),
-                    )
-                    st.plotly_chart(fig2, use_container_width=True)
-
-            except Exception as e:
-                logger.error(f"Weather page error: {e}")
-                st.error(f"Weather fetch failed: {e}")
 
 
 # ── Router ────────────────────────────────────────────────────────────────────
