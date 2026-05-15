@@ -747,17 +747,26 @@ def page_weather(data: pl.DataFrame) -> None:
 def route_page(data: pl.DataFrame) -> None:
     """Dispatches to the correct page based on session state."""
     page = st.session_state.get("page", "Dashboard")
+
     try:
         if page == "Dashboard":
             page_dashboard(data)
+
         elif page == "Map View":
             page_map(data)
+
         elif page == "Intelligence Feed":
             page_news()
+
         elif page == "Scenario Lab":
             page_scenario(data)
+
         elif page == "PDF Report":
             page_pdf(data)
+
+        elif page == "Weather Monitor":
+            page_weather(data)
+
     except Exception as e:
         logger.error(f"Routing error on '{page}': {e}")
         st.error(f"Page '{page}' crashed: {e}")
