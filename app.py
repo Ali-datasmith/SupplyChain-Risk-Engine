@@ -139,634 +139,326 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
 def render_login_page() -> bool:
-    """Enterprise-grade $5000-tier login page with full-bleed map, premium card, animations."""
+    """Renders the login page. Returns True if login is successful."""
+    st.markdown(
+        """
+        <style>
+        [data-testid="stAppViewContainer"] {
+            background: linear-gradient(135deg, #0a0a0a 0%, #0d1117 50%, #0a0f1e 100%);
+        }
+        [data-testid="stSidebar"] { display: none; }
+        [data-testid="stHeader"] { display: none; }
 
-    st.markdown("""
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        .login-container {
+            max-width: 480px;
+            margin: 0 auto 0 auto;
+            padding: 36px 36px 28px 36px;
+            background: rgba(0, 255, 65, 0.04);
+            border: 1px solid rgba(0, 255, 65, 0.25);
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.08);
+        }
 
-    <style>
-    /* ── GLOBAL RESET ── */
-    html, body, [data-testid="stAppViewContainer"],
-    [data-testid="stMain"], .main, .block-container {
-        margin: 0 !important; padding: 0 !important;
-        background: #030d07 !important;
-        font-family: 'Inter', -apple-system, sans-serif !important;
-    }
-    [data-testid="stSidebar"]          { display: none !important; }
-    [data-testid="stHeader"]           { display: none !important; }
-    [data-testid="stToolbar"]          { display: none !important; }
-    [data-testid="stDecoration"]       { display: none !important; }
-    footer                             { display: none !important; }
-    .block-container { max-width: 100% !important; padding: 0 !important; }
+        /* World map banner box */
+        .map-banner {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 200, 80, 0.35);
+            margin-bottom: 22px;
+            background: #060e0a;
+            box-shadow: 0 0 24px rgba(0,255,65,0.10), inset 0 0 30px rgba(0,20,10,0.8);
+        }
 
-    /* ── FULLSCREEN BACKGROUND ── */
-    .ent-bg {
-        position: relative;
-        min-height: 100vh;
-        width: 100%;
-        background: #030d07;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        padding: 40px 20px;
-    }
+        .login-title {
+            text-align: center;
+            color: #00FF41;
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 3px;
+            text-shadow: 0 0 20px rgba(0,255,65,0.5);
+        }
+        .login-subtitle {
+            text-align: center;
+            color: rgba(0, 255, 65, 0.6);
+            font-size: 0.82rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 26px;
+        }
+        .login-divider {
+            border: none;
+            border-top: 1px solid rgba(0,255,65,0.15);
+            margin: 20px 0;
+        }
+        .credentials-box {
+            background: rgba(0,255,65,0.05);
+            border: 1px solid rgba(0,255,65,0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 0.82rem;
+            color: rgba(0,255,65,0.75);
+        }
+        .credentials-box b { color: #00FF41; }
 
-    /* Animated dot grid */
-    .ent-bg::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image:
-            radial-gradient(circle, rgba(0,200,80,0.07) 1px, transparent 1px);
-        background-size: 36px 36px;
-        animation: gridDrift 20s linear infinite;
-    }
-    @keyframes gridDrift {
-        0%   { background-position: 0 0; }
-        100% { background-position: 36px 36px; }
-    }
+        .powered-by {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: rgba(0,255,65,0.35);
+            text-transform: uppercase;
+        }
+        .powered-by span {
+            color: rgba(0,255,65,0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    /* Corner accent brackets */
-    .ent-bg::after {
-        content: '';
-        position: absolute;
-        top: 28px; left: 28px;
-        width: 80px; height: 80px;
-        border-top: 1px solid rgba(0,200,80,0.18);
-        border-left: 1px solid rgba(0,200,80,0.18);
-    }
+    # World map SVG — cyan/teal tones on dark background, matches green theme
+    WORLD_MAP_SVG = """
+    <div class="map-banner">
+    <svg viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#003318" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#020a05" stop-opacity="1"/>
+        </radialGradient>
+        <filter id="blur1">
+          <feGaussianBlur stdDeviation="1.2"/>
+        </filter>
+        <!-- Animated pulse for hotspots -->
+        <radialGradient id="pulse" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#00FF41" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#00FF41" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
 
-    /* Top scanning bar */
-    .scan-bar {
-        position: absolute;
-        top: 0; left: 0; right: 0; height: 2px;
-        background: linear-gradient(90deg,
-            transparent 0%, rgba(0,200,80,0.0) 20%,
-            #00e64d 50%, rgba(0,229,100,0.0) 80%, transparent 100%);
-        animation: scanPulse 4s ease-in-out infinite;
-    }
-    @keyframes scanPulse {
-        0%, 100% { opacity: 0.3; transform: scaleX(0.6); }
-        50%       { opacity: 1;   transform: scaleX(1); }
-    }
+      <!-- Background -->
+      <rect width="900" height="280" fill="url(#glow)"/>
 
-    /* Bottom-right bracket */
-    .br-bracket {
-        position: absolute;
-        bottom: 28px; right: 28px;
-        width: 80px; height: 80px;
-        border-bottom: 1px solid rgba(0,200,80,0.18);
-        border-right:  1px solid rgba(0,200,80,0.18);
-    }
+      <!-- Grid lines (longitude/latitude) -->
+      <g stroke="#00331a" stroke-width="0.5" opacity="0.6">
+        <line x1="0" y1="46" x2="900" y2="46"/>
+        <line x1="0" y1="93" x2="900" y2="93"/>
+        <line x1="0" y1="140" x2="900" y2="140"/>
+        <line x1="0" y1="186" x2="900" y2="186"/>
+        <line x1="0" y1="233" x2="900" y2="233"/>
+        <line x1="100" y1="0" x2="100" y2="280"/>
+        <line x1="200" y1="0" x2="200" y2="280"/>
+        <line x1="300" y1="0" x2="300" y2="280"/>
+        <line x1="400" y1="0" x2="400" y2="280"/>
+        <line x1="500" y1="0" x2="500" y2="280"/>
+        <line x1="600" y1="0" x2="600" y2="280"/>
+        <line x1="700" y1="0" x2="700" y2="280"/>
+        <line x1="800" y1="0" x2="800" y2="280"/>
+      </g>
 
-    /* ── STATUS BAR (top of page) ── */
-    .ent-status-bar {
-        position: absolute;
-        top: 16px; left: 50%; transform: translateX(-50%);
-        display: flex; align-items: center; gap: 20px;
-        background: rgba(0,0,0,0.5);
-        border: 1px solid rgba(0,200,80,0.12);
-        border-radius: 40px;
-        padding: 6px 18px;
-        z-index: 10;
-        white-space: nowrap;
-    }
-    .status-item {
-        display: flex; align-items: center; gap: 5px;
-        font-size: 10px; font-weight: 500;
-        color: rgba(0,200,80,0.45);
-        letter-spacing: 1.5px; text-transform: uppercase;
-        font-family: 'JetBrains Mono', monospace;
-    }
-    .status-dot {
-        width: 5px; height: 5px; border-radius: 50%;
-        background: #00e64d;
-        animation: blink 2s ease-in-out infinite;
-    }
-    .status-dot.amber  { background: #f59e0b; animation-delay: 0.7s; }
-    .status-dot.cyan   { background: #00e5ff; animation-delay: 1.4s; }
-    @keyframes blink {
-        0%,100% { opacity: 1; } 50% { opacity: 0.25; }
-    }
+      <!-- ── CONTINENTS (simplified outlines, teal/dark-green fill) ── -->
+      <!-- North America -->
+      <path d="M95,42 L155,38 L195,48 L210,70 L205,95 L185,118 L165,135 L150,155
+               L130,160 L110,148 L90,130 L75,105 L70,78 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+      <!-- Central America strip -->
+      <path d="M155,155 L165,160 L158,175 L148,172 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.9"/>
 
-    /* ── MAIN CARD ── */
-    .ent-card {
-        position: relative; z-index: 5;
-        width: 460px;
-        background: rgba(4, 14, 8, 0.97);
-        border: 1px solid rgba(0,200,80,0.22);
-        border-radius: 20px;
-        overflow: hidden;
-        animation: cardAppear 0.6s cubic-bezier(0.16,1,0.3,1) both;
-    }
-    @keyframes cardAppear {
-        from { opacity: 0; transform: translateY(24px) scale(0.97); }
-        to   { opacity: 1; transform: translateY(0)   scale(1); }
-    }
+      <!-- South America -->
+      <path d="M160,170 L195,165 L220,180 L230,210 L225,240 L205,258
+               L180,262 L160,248 L148,225 L148,200 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
 
-    /* Card top accent line */
-    .ent-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 10%; right: 10%; height: 1px;
-        background: linear-gradient(90deg,
-            transparent, rgba(0,230,77,0.6), rgba(0,229,255,0.4), rgba(0,230,77,0.6), transparent);
-    }
+      <!-- Greenland -->
+      <path d="M190,18 L215,15 L225,28 L215,40 L195,42 Z"
+            fill="#002d16" stroke="#00c853" stroke-width="0.8" opacity="0.75"/>
 
-    /* ── MAP SECTION ── */
-    .map-section {
-        width: 100%; height: 210px;
-        background: #020a05;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 1px solid rgba(0,200,80,0.14);
-    }
-    .map-section svg { display: block; width: 100%; height: 100%; }
+      <!-- Europe -->
+      <path d="M380,38 L420,35 L440,45 L445,62 L430,75 L415,80
+               L395,78 L375,68 L370,52 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+      <!-- Scandinavia bump -->
+      <path d="M405,22 L420,18 L425,32 L410,36 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.8"/>
 
-    /* Horizontal scan line over map */
-    .map-scan {
-        position: absolute;
-        left: 0; right: 0; height: 1px;
-        background: linear-gradient(90deg,
-            transparent, rgba(0,230,77,0.5), rgba(0,229,255,0.3), rgba(0,230,77,0.5), transparent);
-        animation: mapScanAnim 5s linear infinite;
-        pointer-events: none;
-    }
-    @keyframes mapScanAnim {
-        0%   { top: 0;     opacity: 0; }
-        5%   {             opacity: 1; }
-        95%  {             opacity: 1; }
-        100% { top: 210px; opacity: 0; }
-    }
+      <!-- Africa -->
+      <path d="M375,85 L415,82 L440,95 L450,120 L448,155 L440,185
+               L420,210 L400,218 L378,208 L362,180 L358,148
+               L360,115 L368,95 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
 
-    /* Brand overlay at map bottom */
-    .map-brand-overlay {
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        padding: 36px 22px 16px;
-        background: linear-gradient(to top,
-            rgba(4,14,8,1) 0%, rgba(4,14,8,0.92) 55%, transparent 100%);
-        display: flex; align-items: flex-end; justify-content: space-between;
-    }
-    .brand-left  { display: flex; align-items: center; gap: 13px; }
-    .brand-shield {
-        width: 44px; height: 44px;
-        background: rgba(0,200,80,0.07);
-        border: 1px solid rgba(0,200,80,0.32);
-        border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
-    .brand-shield svg { width: 24px; height: 24px; }
-    .brand-title {
-        font-size: 18px; font-weight: 700;
-        color: #00e64d;
-        letter-spacing: 4px; text-transform: uppercase;
-        line-height: 1;
-        font-family: 'Inter', sans-serif;
-    }
-    .brand-sub {
-        font-size: 9.5px; font-weight: 400;
-        color: rgba(0,180,70,0.45);
-        letter-spacing: 2.5px; text-transform: uppercase;
-        margin-top: 5px;
-        font-family: 'JetBrains Mono', monospace;
-    }
-    .live-pill {
-        display: flex; align-items: center; gap: 6px;
-        background: rgba(0,200,80,0.06);
-        border: 1px solid rgba(0,200,80,0.2);
-        border-radius: 20px; padding: 5px 10px;
-    }
-    .live-dot {
-        width: 6px; height: 6px; border-radius: 50%;
-        background: #00e64d;
-        animation: blink 1.6s ease-in-out infinite;
-    }
-    .live-label {
-        font-size: 9px; font-weight: 600;
-        color: rgba(0,200,80,0.6);
-        letter-spacing: 2px; text-transform: uppercase;
-        font-family: 'JetBrains Mono', monospace;
-    }
+      <!-- Middle East / Arabian Peninsula -->
+      <path d="M452,88 L480,85 L495,98 L492,118 L475,128 L455,120 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1" opacity="0.85"/>
 
-    /* ── FORM SECTION ── */
-    .ent-form { padding: 26px 28px 22px; }
+      <!-- Russia / Central Asia (broad) -->
+      <path d="M420,22 L560,18 L610,30 L620,50 L600,65 L560,68
+               L510,62 L460,58 L435,48 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
 
-    /* Welcome row */
-    .welcome-row {
-        display: flex; align-items: center; gap: 10px;
-        margin-bottom: 22px;
-    }
-    .welcome-line { flex: 1; height: 1px; background: rgba(0,150,60,0.14); }
-    .welcome-text {
-        font-size: 9.5px; font-weight: 500;
-        color: rgba(0,170,65,0.4);
-        letter-spacing: 3px; text-transform: uppercase;
-        font-family: 'JetBrains Mono', monospace;
-        white-space: nowrap;
-    }
+      <!-- India -->
+      <path d="M520,90 L548,88 L558,105 L552,130 L535,148 L518,130 L512,108 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1" opacity="0.85"/>
 
-    /* Field labels */
-    .ent-label {
-        display: flex; align-items: center; gap: 6px;
-        font-size: 10px; font-weight: 600;
-        color: rgba(0,180,70,0.5);
-        letter-spacing: 2.5px; text-transform: uppercase;
-        margin-bottom: 7px;
-        font-family: 'JetBrains Mono', monospace;
-    }
-    .ent-label-icon { font-size: 12px; opacity: 0.7; }
+      <!-- Southeast Asia islands (Indonesia, etc.) -->
+      <path d="M620,140 L650,138 L660,148 L648,158 L625,155 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
+      <path d="M660,148 L690,145 L700,155 L688,163 L662,160 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
 
-    /* Override Streamlit text inputs */
-    div[data-testid="stTextInput"] input {
-        background: rgba(0,0,0,0.45) !important;
-        border: 1px solid rgba(0,150,60,0.22) !important;
-        border-radius: 10px !important;
-        color: #00e64d !important;
-        font-size: 13px !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        letter-spacing: 0.5px !important;
-        padding: 11px 14px !important;
-        transition: border-color 0.2s !important;
-    }
-    div[data-testid="stTextInput"] input:focus {
-        border-color: rgba(0,200,80,0.55) !important;
-        box-shadow: 0 0 0 3px rgba(0,200,80,0.06) !important;
-    }
-    div[data-testid="stTextInput"] input::placeholder {
-        color: rgba(0,150,60,0.25) !important;
-    }
-    div[data-testid="stTextInput"] label {
-        display: none !important;
-    }
+      <!-- China / East Asia -->
+      <path d="M565,45 L640,40 L668,55 L672,80 L655,98 L628,105
+               L598,100 L568,88 L555,68 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
 
-    /* Login button */
-    div[data-testid="stButton"] > button {
-        width: 100% !important;
-        background: rgba(0,200,80,0.07) !important;
-        border: 1px solid rgba(0,200,80,0.38) !important;
-        border-radius: 11px !important;
-        color: #00e64d !important;
-        font-size: 11.5px !important;
-        font-weight: 700 !important;
-        letter-spacing: 3.5px !important;
-        text-transform: uppercase !important;
-        padding: 14px 20px !important;
-        font-family: 'Inter', sans-serif !important;
-        transition: all 0.22s ease !important;
-        cursor: pointer !important;
-        margin-top: 6px !important;
-    }
-    div[data-testid="stButton"] > button:hover {
-        background: rgba(0,200,80,0.14) !important;
-        border-color: rgba(0,220,80,0.6) !important;
-        transform: translateY(-1px) !important;
-    }
-    div[data-testid="stButton"] > button:active {
-        transform: translateY(0px) !important;
-    }
+      <!-- Japan -->
+      <path d="M690,58 L700,54 L708,65 L700,76 L690,70 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
 
-    /* Error/success alerts — restyle */
-    div[data-testid="stAlert"] {
-        background: rgba(220,38,38,0.08) !important;
-        border: 1px solid rgba(220,38,38,0.25) !important;
-        border-radius: 10px !important;
-        font-size: 12px !important;
-        margin-top: 10px !important;
-    }
+      <!-- Australia -->
+      <path d="M658,185 L718,180 L745,195 L748,228 L730,248
+               L698,252 L668,240 L652,218 L652,200 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+      <!-- New Zealand -->
+      <path d="M758,240 L765,235 L770,248 L763,255 Z"
+            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.75"/>
 
-    /* Divider */
-    .ent-divider {
-        height: 1px;
-        background: rgba(0,150,60,0.12);
-        margin: 18px 0 16px;
-    }
+      <!-- ── SUPPLY CHAIN RISK HOTSPOTS (glowing dots) ── -->
+      <!-- Shanghai -->
+      <circle cx="668" cy="82" r="5" fill="#00FF41" opacity="0.9">
+        <animate attributeName="r" values="5;9;5" dur="2.2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Rotterdam -->
+      <circle cx="398" cy="52" r="4" fill="#00e5ff" opacity="0.85">
+        <animate attributeName="r" values="4;8;4" dur="2.8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="2.8s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Los Angeles -->
+      <circle cx="108" cy="112" r="4" fill="#00FF41" opacity="0.85">
+        <animate attributeName="r" values="4;8;4" dur="3.1s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="3.1s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Singapore -->
+      <circle cx="628" cy="152" r="4" fill="#00e5ff" opacity="0.85">
+        <animate attributeName="r" values="4;7;4" dur="2.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Dubai -->
+      <circle cx="478" cy="105" r="4" fill="#39ff14" opacity="0.85">
+        <animate attributeName="r" values="4;7;4" dur="3.4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="3.4s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Mumbai -->
+      <circle cx="528" cy="118" r="3.5" fill="#00e5ff" opacity="0.8">
+        <animate attributeName="r" values="3.5;7;3.5" dur="2.9s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.9s" repeatCount="indefinite"/>
+      </circle>
+      <!-- New York -->
+      <circle cx="178" cy="88" r="3.5" fill="#00FF41" opacity="0.8">
+        <animate attributeName="r" values="3.5;7;3.5" dur="3.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.6s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Karachi -->
+      <circle cx="506" cy="105" r="3" fill="#39ff14" opacity="0.75">
+        <animate attributeName="r" values="3;6;3" dur="2.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.75;0.2;0.75" dur="2.6s" repeatCount="indefinite"/>
+      </circle>
 
-    /* Credentials box */
-    .creds-box {
-        background: rgba(0,200,80,0.04);
-        border: 1px solid rgba(0,200,80,0.13);
-        border-radius: 11px;
-        padding: 14px 16px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-    }
-    .cred-item {}
-    .cred-key {
-        font-size: 9px; font-weight: 600;
-        color: rgba(0,170,65,0.4);
-        letter-spacing: 2px; text-transform: uppercase;
-        font-family: 'JetBrains Mono', monospace;
-        margin-bottom: 4px;
-    }
-    .cred-val {
-        font-size: 12.5px; font-weight: 500;
-        color: rgba(0,220,80,0.75);
-        font-family: 'JetBrains Mono', monospace;
-        letter-spacing: 0.3px;
-    }
-    .creds-icon {
-        font-size: 10px; margin-right: 4px; opacity: 0.6;
-    }
+      <!-- ── SHIPPING ROUTE LINES ── -->
+      <g stroke="#00c853" stroke-width="0.9" stroke-dasharray="6,4" opacity="0.45" fill="none">
+        <!-- LA to Shanghai -->
+        <path d="M108,112 Q390,60 668,82"/>
+        <!-- Rotterdam to New York -->
+        <path d="M398,52 Q290,40 178,88"/>
+        <!-- Shanghai to Singapore -->
+        <path d="M668,82 Q648,118 628,152"/>
+        <!-- Dubai to Rotterdam -->
+        <path d="M478,105 Q438,78 398,52"/>
+        <!-- Singapore to Australia -->
+        <path d="M628,152 Q645,168 698,210"/>
+        <!-- Mumbai to Dubai -->
+        <path d="M528,118 Q503,112 478,105"/>
+      </g>
 
-    /* Powered by footer */
-    .ent-footer {
-        padding: 14px 28px 18px;
-        border-top: 1px solid rgba(0,150,60,0.1);
-        display: flex; align-items: center; justify-content: space-between;
-    }
-    .footer-left {
-        font-size: 9px; font-weight: 400;
-        color: rgba(0,150,60,0.3);
-        letter-spacing: 1.5px; text-transform: uppercase;
-        font-family: 'JetBrains Mono', monospace;
-    }
-    .footer-left span {
-        color: rgba(0,200,80,0.55);
-        font-weight: 600;
-    }
-    .footer-version {
-        font-size: 9px;
-        color: rgba(0,150,60,0.25);
-        font-family: 'JetBrains Mono', monospace;
-        letter-spacing: 1px;
-    }
+      <!-- Equator line -->
+      <line x1="0" y1="158" x2="900" y2="158" stroke="#00FF41" stroke-width="0.6"
+            stroke-dasharray="12,8" opacity="0.25"/>
 
-    /* Streamlit block spacing fix */
-    div[data-testid="stVerticalBlock"] > div { gap: 0 !important; }
-    .stTextInput { margin-bottom: 12px !important; }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # ── Full world map SVG ─────────────────────────────────────────────────────
-    MAP_SVG = """
-    <div class="map-section">
-      <div class="map-scan"></div>
-      <svg viewBox="0 0 460 210" xmlns="http://www.w3.org/2000/svg"
-           style="display:block;width:100%;height:100%;">
-        <defs>
-          <radialGradient id="bgG" cx="50%" cy="45%" r="65%">
-            <stop offset="0%"   stop-color="#031408"/>
-            <stop offset="100%" stop-color="#010704"/>
-          </radialGradient>
-          <filter id="cg" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <filter id="dg" x="-80%" y="-80%" width="360%" height="360%">
-            <feGaussianBlur stdDeviation="5" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-
-        <rect width="460" height="210" fill="url(#bgG)"/>
-
-        <!-- Lat/lon grid -->
-        <g stroke="#092814" stroke-width="0.5">
-          <line x1="0" y1="35"  x2="460" y2="35"/>
-          <line x1="0" y1="70"  x2="460" y2="70"/>
-          <line x1="0" y1="105" x2="460" y2="105"/>
-          <line x1="0" y1="140" x2="460" y2="140"/>
-          <line x1="0" y1="175" x2="460" y2="175"/>
-          <line x1="46"  y1="0" x2="46"  y2="210"/>
-          <line x1="92"  y1="0" x2="92"  y2="210"/>
-          <line x1="138" y1="0" x2="138" y2="210"/>
-          <line x1="184" y1="0" x2="184" y2="210"/>
-          <line x1="230" y1="0" x2="230" y2="210"/>
-          <line x1="276" y1="0" x2="276" y2="210"/>
-          <line x1="322" y1="0" x2="322" y2="210"/>
-          <line x1="368" y1="0" x2="368" y2="210"/>
-          <line x1="414" y1="0" x2="414" y2="210"/>
-        </g>
-
-        <!-- Equator -->
-        <line x1="0" y1="105" x2="460" y2="105"
-              stroke="#00e64d" stroke-width="0.5" stroke-dasharray="8,6" opacity="0.18"/>
-
-        <!-- CONTINENTS — bright visible fills -->
-        <!-- North America -->
-        <path d="M42,18 L75,16 L95,24 L102,36 L100,50 L90,62 L80,72 L73,82
-                 L62,86 L52,78 L44,66 L36,52 L34,36 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.4" filter="url(#cg)"/>
-        <path d="M73,82 L79,86 L74,94 L67,91 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="0.8"/>
-        <!-- South America -->
-        <path d="M76,98 L94,94 L108,102 L114,122 L110,146 L100,160
-                 L84,163 L70,154 L66,136 L68,116 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.4" filter="url(#cg)"/>
-        <!-- Greenland -->
-        <path d="M90,5 L106,3 L112,12 L106,20 L92,21 Z"
-              fill="#083d1c" stroke="#00aa38" stroke-width="0.9"/>
-        <!-- Europe -->
-        <path d="M190,20 L210,18 L222,25 L224,36 L216,44 L204,48
-                 L192,45 L184,37 L182,28 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.4" filter="url(#cg)"/>
-        <path d="M200,10 L210,7 L214,17 L202,19 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="0.8"/>
-        <!-- Africa -->
-        <path d="M186,52 L208,50 L222,58 L228,74 L226,100 L220,120
-                 L208,130 L194,132 L180,124 L174,106 L174,82 L178,62 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.4" filter="url(#cg)"/>
-        <!-- Middle East -->
-        <path d="M228,52 L244,50 L252,58 L250,72 L238,79 L226,74 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.1"/>
-        <!-- Russia -->
-        <path d="M208,12 L290,10 L314,18 L318,30 L302,40 L274,43
-                 L248,40 L228,36 L214,26 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.4" filter="url(#cg)"/>
-        <!-- India -->
-        <path d="M260,54 L276,52 L282,62 L278,80 L268,90 L256,80 L252,64 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.1"/>
-        <!-- China/East Asia -->
-        <path d="M284,26 L330,23 L344,32 L346,50 L332,60 L308,64
-                 L288,58 L278,44 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.4" filter="url(#cg)"/>
-        <!-- SE Asia islands -->
-        <path d="M316,84 L332,82 L338,90 L328,98 L314,96 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="0.9"/>
-        <path d="M338,90 L354,88 L360,96 L350,104 L336,102 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="0.9"/>
-        <!-- Japan -->
-        <path d="M350,30 L358,27 L363,36 L356,44 L348,40 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="0.9"/>
-        <!-- Australia -->
-        <path d="M324,120 L360,116 L378,126 L380,150 L366,164
-                 L340,167 L318,158 L308,142 L310,128 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="1.4" filter="url(#cg)"/>
-        <!-- NZ -->
-        <path d="M384,152 L390,148 L394,158 L388,163 Z"
-              fill="#0c5c2c" stroke="#00d44a" stroke-width="0.8"/>
-
-        <!-- Shipping routes -->
-        <g stroke="#00cc44" stroke-width="0.8" stroke-dasharray="5,4" fill="none" opacity="0.38">
-          <path d="M52,66 Q198,42 340,42"/>
-          <path d="M196,36 Q148,24 90,50"/>
-          <path d="M340,42 Q328,68 322,92"/>
-          <path d="M240,65 Q218,52 196,36"/>
-          <path d="M322,92 Q348,108 354,138"/>
-          <path d="M266,74 Q254,68 240,65"/>
-          <path d="M108,102 Q92,118 84,135"/>
-        </g>
-
-        <!-- Risk hotspots -->
-        <!-- Shanghai -->
-        <circle cx="340" cy="42" r="4.5" fill="#00FF41" opacity="0.92">
-          <animate attributeName="r"       values="4.5;8.5;4.5" dur="2.2s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.92;0.22;0.92" dur="2.2s" repeatCount="indefinite"/>
-        </circle>
-        <!-- Rotterdam -->
-        <circle cx="196" cy="36" r="3.8" fill="#00e5ff" opacity="0.88">
-          <animate attributeName="r"       values="3.8;7.5;3.8" dur="2.8s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.88;0.22;0.88" dur="2.8s" repeatCount="indefinite"/>
-        </circle>
-        <!-- Los Angeles -->
-        <circle cx="52" cy="66" r="3.8" fill="#00FF41" opacity="0.85">
-          <animate attributeName="r"       values="3.8;7;3.8" dur="3.1s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.85;0.2;0.85" dur="3.1s" repeatCount="indefinite"/>
-        </circle>
-        <!-- Singapore -->
-        <circle cx="322" cy="92" r="3.5" fill="#00e5ff" opacity="0.85">
-          <animate attributeName="r"       values="3.5;7;3.5" dur="2.5s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.85;0.2;0.85" dur="2.5s" repeatCount="indefinite"/>
-        </circle>
-        <!-- Dubai -->
-        <circle cx="240" cy="65" r="3.5" fill="#a3ff00" opacity="0.82">
-          <animate attributeName="r"       values="3.5;6.5;3.5" dur="3.4s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.82;0.2;0.82" dur="3.4s" repeatCount="indefinite"/>
-        </circle>
-        <!-- Mumbai -->
-        <circle cx="266" cy="74" r="3.2" fill="#00e5ff" opacity="0.8">
-          <animate attributeName="r"       values="3.2;6;3.2" dur="2.9s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.8;0.18;0.8" dur="2.9s" repeatCount="indefinite"/>
-        </circle>
-        <!-- New York -->
-        <circle cx="90" cy="50" r="3.2" fill="#00FF41" opacity="0.8">
-          <animate attributeName="r"       values="3.2;6;3.2" dur="3.6s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.8;0.18;0.8" dur="3.6s" repeatCount="indefinite"/>
-        </circle>
-        <!-- Karachi -->
-        <circle cx="254" cy="62" r="2.8" fill="#a3ff00" opacity="0.75">
-          <animate attributeName="r"       values="2.8;5.5;2.8" dur="2.6s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.75;0.18;0.75" dur="2.6s" repeatCount="indefinite"/>
-        </circle>
-
-        <!-- Map labels -->
-        <text x="8" y="205" fill="#00e64d" font-size="7.5" font-family="'JetBrains Mono',monospace"
-              opacity="0.35" letter-spacing="1.2">GLOBAL SUPPLY CHAIN RISK MAP</text>
-        <circle cx="368" cy="202" r="3" fill="#00e5ff" opacity="0.5">
-          <animate attributeName="opacity" values="0.5;0.1;0.5" dur="1.5s" repeatCount="indefinite"/>
-        </circle>
-        <text x="374" y="206" fill="#00e5ff" font-size="7.5" font-family="'JetBrains Mono',monospace"
-              opacity="0.35" letter-spacing="1.5">LIVE</text>
-      </svg>
-
-      <!-- Brand overlay -->
-      <div class="map-brand-overlay">
-        <div class="brand-left">
-          <div class="brand-shield">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L4 5.5V11C4 15.55 7.41 19.74 12 21C16.59 19.74 20 15.55 20 11V5.5L12 2Z"
-                    fill="rgba(0,200,80,0.12)" stroke="#00e64d" stroke-width="1.4"
-                    stroke-linejoin="round"/>
-              <path d="M9 12L11 14L15 10" stroke="#00e64d" stroke-width="1.5"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div>
-            <div class="brand-title">RISK ENGINE</div>
-            <div class="brand-sub">Supply Chain Intelligence Platform</div>
-          </div>
-        </div>
-        <div class="live-pill">
-          <div class="live-dot"></div>
-          <span class="live-label">LIVE</span>
-        </div>
-      </div>
+      <!-- Corner label -->
+      <text x="12" y="270" fill="#00FF41" font-size="9" font-family="monospace"
+            opacity="0.4" letter-spacing="1">GLOBAL SUPPLY CHAIN RISK MAP</text>
+      <text x="820" y="270" fill="#00e5ff" font-size="9" font-family="monospace"
+            opacity="0.35" letter-spacing="1">LIVE</text>
+      <circle cx="812" cy="266" r="3" fill="#00e5ff" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.1;0.5" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
     </div>
     """
 
-    # ── Page wrapper open ──────────────────────────────────────────────────────
-    st.markdown("""
-    <div class="ent-bg">
-      <div class="scan-bar"></div>
-      <div class="br-bracket"></div>
-      <div class="ent-status-bar">
-        <div class="status-item"><div class="status-dot"></div>Systems Nominal</div>
-        <div class="status-item"><div class="status-dot amber"></div>24 Active Alerts</div>
-        <div class="status-item"><div class="status-dot cyan"></div>847 Suppliers</div>
-      </div>
-      <div class="ent-card">
-    """, unsafe_allow_html=True)
+    col_l, col_c, col_r = st.columns([1, 2.2, 1])
+    with col_c:
+        st.markdown('<div class="login-container">', unsafe_allow_html=True)
 
-    # Map section
-    st.markdown(MAP_SVG, unsafe_allow_html=True)
+        # World map banner (inside the green rectangle)
+        st.markdown(WORLD_MAP_SVG, unsafe_allow_html=True)
 
-    # Form section open
-    st.markdown("""
-    <div class="ent-form">
-      <div class="welcome-row">
-        <div class="welcome-line"></div>
-        <div class="welcome-text">Welcome to Supply Chain Risk Engine</div>
-        <div class="welcome-line"></div>
-      </div>
-      <div class="ent-label"><span class="ent-label-icon">◈</span> Username</div>
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown('<div class="login-title">🛡 RISK ENGINE</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="login-subtitle">Welcome to Supply Chain Risk Engine</div>',
+            unsafe_allow_html=True,
+        )
 
-    username = st.text_input(
-        "Username", placeholder="Enter your username", key="login_username", label_visibility="collapsed"
-    )
+        username = st.text_input(
+            "Username",
+            placeholder="Enter your username",
+            key="login_username",
+        )
+        password = st.text_input(
+            "Password",
+            type="password",
+            placeholder="Enter your password",
+            key="login_password",
+        )
 
-    st.markdown('<div style="padding: 0 28px;"><div class="ent-label"><span class="ent-label-icon">◈</span> Password</div></div>', unsafe_allow_html=True)
+        st.markdown("")
+        login_btn = st.button("🔐  LOGIN", use_container_width=True, type="primary")
 
-    password = st.text_input(
-        "Password", type="password", placeholder="Enter your password",
-        key="login_password", label_visibility="collapsed"
-    )
+        if login_btn:
+            if not username or not password:
+                st.error("⚠️ Please enter both username and password.")
+            elif username in VALID_CREDENTIALS and hash_password(password) == VALID_CREDENTIALS[username]:
+                st.session_state["authenticated"] = True
+                st.session_state["logged_in_user"] = username
+                st.rerun()
+            else:
+                st.error("❌ Invalid username or password.")
 
-    login_btn = st.button("⬡  AUTHENTICATE  ⬡", use_container_width=True, type="primary")
+        st.markdown('<hr class="login-divider">', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="credentials-box">
+            🔑 <b>Login Credentials</b><br><br>
+            <b>Username:</b> Ali-datasmith<br>
+            <b>Password:</b> SC@Risk#2025!
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    if login_btn:
-        if not username or not password:
-            st.error("⚠️  Both fields are required to authenticate.")
-        elif username in VALID_CREDENTIALS and hash_password(password) == VALID_CREDENTIALS[username]:
-            st.session_state["authenticated"] = True
-            st.session_state["logged_in_user"] = username
-            st.rerun()
-        else:
-            st.error("⛔  Access denied. Invalid credentials.")
+        # Powered by footer
+        st.markdown(
+            '<div class="powered-by">Powered by &nbsp;<span>⚡ Ali-datasmith</span></div>',
+            unsafe_allow_html=True,
+        )
 
-    # Credentials + footer
-    st.markdown("""
-      <div class="ent-divider"></div>
-      <div class="creds-box">
-        <div class="cred-item">
-          <div class="cred-key"><span class="creds-icon">◈</span>Username</div>
-          <div class="cred-val">Ali-datasmith</div>
-        </div>
-        <div class="cred-item">
-          <div class="cred-key"><span class="creds-icon">◈</span>Password</div>
-          <div class="cred-val">SC@Risk#2025!</div>
-        </div>
-      </div>
-    </div>
-    <!-- end ent-form -->
-
-    <div class="ent-footer">
-      <div class="footer-left">Powered by &nbsp;<span>Ali-datasmith</span></div>
-      <div class="footer-version">v2.4.1 &nbsp;·&nbsp; Enterprise</div>
-    </div>
-
-    </div>
-    <!-- end ent-card -->
-    </div>
-    <!-- end ent-bg -->
-    """, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     return False
 
