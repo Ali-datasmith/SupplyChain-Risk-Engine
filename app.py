@@ -221,32 +221,36 @@ def render_login_page() -> bool:
         unsafe_allow_html=True,
     )
 
-    # World map SVG — cyan/teal tones on dark background, matches green theme
+    # World map SVG — bright continent fills clearly visible on dark bg
     WORLD_MAP_SVG = """
     <div class="map-banner">
     <svg viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">
       <defs>
-        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#003318" stop-opacity="1"/>
-          <stop offset="100%" stop-color="#020a05" stop-opacity="1"/>
+        <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+          <stop offset="0%" stop-color="#021a0d"/>
+          <stop offset="100%" stop-color="#010805"/>
         </radialGradient>
-        <filter id="blur1">
-          <feGaussianBlur stdDeviation="1.2"/>
+        <filter id="contGlow">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <!-- Animated pulse for hotspots -->
-        <radialGradient id="pulse" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#00FF41" stop-opacity="0.8"/>
-          <stop offset="100%" stop-color="#00FF41" stop-opacity="0"/>
-        </radialGradient>
       </defs>
 
       <!-- Background -->
-      <rect width="900" height="280" fill="url(#glow)"/>
+      <rect width="900" height="280" fill="url(#bgGrad)"/>
+
+      <!-- Ocean texture dots -->
+      <g fill="#0a3d20" opacity="0.18">
+        <circle cx="50"  cy="60"  r="1"/><circle cx="150" cy="200" r="1"/>
+        <circle cx="280" cy="80"  r="1"/><circle cx="320" cy="230" r="1"/>
+        <circle cx="840" cy="100" r="1"/><circle cx="870" cy="200" r="1"/>
+        <circle cx="30"  cy="180" r="1"/><circle cx="800" cy="260" r="1"/>
+      </g>
 
       <!-- Grid lines (longitude/latitude) -->
-      <g stroke="#00331a" stroke-width="0.5" opacity="0.6">
-        <line x1="0" y1="46" x2="900" y2="46"/>
-        <line x1="0" y1="93" x2="900" y2="93"/>
+      <g stroke="#0d4020" stroke-width="0.6" opacity="1">
+        <line x1="0" y1="46"  x2="900" y2="46"/>
+        <line x1="0" y1="93"  x2="900" y2="93"/>
         <line x1="0" y1="140" x2="900" y2="140"/>
         <line x1="0" y1="186" x2="900" y2="186"/>
         <line x1="0" y1="233" x2="900" y2="233"/>
@@ -260,73 +264,73 @@ def render_login_page() -> bool:
         <line x1="800" y1="0" x2="800" y2="280"/>
       </g>
 
-      <!-- ── CONTINENTS (simplified outlines, teal/dark-green fill) ── -->
+      <!-- ── CONTINENTS — bright teal-green fill, visible stroke ── -->
       <!-- North America -->
       <path d="M95,42 L155,38 L195,48 L210,70 L205,95 L185,118 L165,135 L150,155
                L130,160 L110,148 L90,130 L75,105 L70,78 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-      <!-- Central America strip -->
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.5" filter="url(#contGlow)"/>
+      <!-- Central America -->
       <path d="M155,155 L165,160 L158,175 L148,172 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.9"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1"/>
 
       <!-- South America -->
       <path d="M160,170 L195,165 L220,180 L230,210 L225,240 L205,258
                L180,262 L160,248 L148,225 L148,200 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.5" filter="url(#contGlow)"/>
 
       <!-- Greenland -->
       <path d="M190,18 L215,15 L225,28 L215,40 L195,42 Z"
-            fill="#002d16" stroke="#00c853" stroke-width="0.8" opacity="0.75"/>
+            fill="#0a5228" stroke="#00cc44" stroke-width="1"/>
 
       <!-- Europe -->
       <path d="M380,38 L420,35 L440,45 L445,62 L430,75 L415,80
                L395,78 L375,68 L370,52 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-      <!-- Scandinavia bump -->
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.5" filter="url(#contGlow)"/>
+      <!-- Scandinavia -->
       <path d="M405,22 L420,18 L425,32 L410,36 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.8"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1"/>
 
       <!-- Africa -->
       <path d="M375,85 L415,82 L440,95 L450,120 L448,155 L440,185
                L420,210 L400,218 L378,208 L362,180 L358,148
                L360,115 L368,95 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.5" filter="url(#contGlow)"/>
 
-      <!-- Middle East / Arabian Peninsula -->
+      <!-- Middle East -->
       <path d="M452,88 L480,85 L495,98 L492,118 L475,128 L455,120 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1" opacity="0.85"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.2"/>
 
-      <!-- Russia / Central Asia (broad) -->
+      <!-- Russia / Central Asia -->
       <path d="M420,22 L560,18 L610,30 L620,50 L600,65 L560,68
                L510,62 L460,58 L435,48 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.5" filter="url(#contGlow)"/>
 
       <!-- India -->
       <path d="M520,90 L548,88 L558,105 L552,130 L535,148 L518,130 L512,108 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1" opacity="0.85"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.2"/>
 
-      <!-- Southeast Asia islands (Indonesia, etc.) -->
+      <!-- SE Asia islands -->
       <path d="M620,140 L650,138 L660,148 L648,158 L625,155 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1"/>
       <path d="M660,148 L690,145 L700,155 L688,163 L662,160 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1"/>
 
       <!-- China / East Asia -->
       <path d="M565,45 L640,40 L668,55 L672,80 L655,98 L628,105
                L598,100 L568,88 L555,68 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.5" filter="url(#contGlow)"/>
 
       <!-- Japan -->
       <path d="M690,58 L700,54 L708,65 L700,76 L690,70 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1"/>
 
       <!-- Australia -->
       <path d="M658,185 L718,180 L745,195 L748,228 L730,248
                L698,252 L668,240 L652,218 L652,200 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1.5" filter="url(#contGlow)"/>
       <!-- New Zealand -->
       <path d="M758,240 L765,235 L770,248 L763,255 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.75"/>
+            fill="#0d6e35" stroke="#00e64d" stroke-width="1"/>
 
       <!-- ── SUPPLY CHAIN RISK HOTSPOTS (glowing dots) ── -->
       <!-- Shanghai -->
