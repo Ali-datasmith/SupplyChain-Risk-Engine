@@ -147,268 +147,55 @@ def render_login_page() -> bool:
             background: linear-gradient(135deg, #0a0a0a 0%, #0d1117 50%, #0a0f1e 100%);
         }
         [data-testid="stSidebar"] { display: none; }
-        [data-testid="stHeader"] { display: none; }
-
         .login-container {
-            max-width: 480px;
-            margin: 0 auto 0 auto;
-            padding: 36px 36px 28px 36px;
+            max-width: 420px;
+            margin: 60px auto 0 auto;
+            padding: 40px 36px 36px 36px;
             background: rgba(0, 255, 65, 0.04);
             border: 1px solid rgba(0, 255, 65, 0.25);
             border-radius: 16px;
             box-shadow: 0 0 40px rgba(0, 255, 65, 0.08);
         }
-
-        /* World map banner box */
-        .map-banner {
-            width: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 200, 80, 0.35);
-            margin-bottom: 22px;
-            background: #060e0a;
-            box-shadow: 0 0 24px rgba(0,255,65,0.10), inset 0 0 30px rgba(0,20,10,0.8);
-        }
-
         .login-title {
             text-align: center;
             color: #00FF41;
-            font-size: 1.9rem;
+            font-size: 2rem;
             font-weight: 800;
             letter-spacing: 2px;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             text-shadow: 0 0 20px rgba(0,255,65,0.5);
         }
         .login-subtitle {
             text-align: center;
             color: rgba(0, 255, 65, 0.6);
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             letter-spacing: 3px;
             text-transform: uppercase;
-            margin-bottom: 26px;
+            margin-bottom: 32px;
         }
         .login-divider {
             border: none;
             border-top: 1px solid rgba(0,255,65,0.15);
-            margin: 20px 0;
+            margin: 24px 0;
         }
         .credentials-box {
             background: rgba(0,255,65,0.05);
             border: 1px solid rgba(0,255,65,0.2);
             border-radius: 8px;
-            padding: 12px 16px;
-            margin-top: 16px;
+            padding: 14px 18px;
+            margin-top: 20px;
             font-size: 0.82rem;
             color: rgba(0,255,65,0.75);
         }
         .credentials-box b { color: #00FF41; }
-
-        .powered-by {
-            text-align: center;
-            margin-top: 18px;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            color: rgba(0,255,65,0.35);
-            text-transform: uppercase;
-        }
-        .powered-by span {
-            color: rgba(0,255,65,0.7);
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    # World map SVG — cyan/teal tones on dark background, matches green theme
-    WORLD_MAP_SVG = """
-    <div class="map-banner">
-    <svg viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">
-      <defs>
-        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#003318" stop-opacity="1"/>
-          <stop offset="100%" stop-color="#020a05" stop-opacity="1"/>
-        </radialGradient>
-        <filter id="blur1">
-          <feGaussianBlur stdDeviation="1.2"/>
-        </filter>
-        <!-- Animated pulse for hotspots -->
-        <radialGradient id="pulse" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#00FF41" stop-opacity="0.8"/>
-          <stop offset="100%" stop-color="#00FF41" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-
-      <!-- Background -->
-      <rect width="900" height="280" fill="url(#glow)"/>
-
-      <!-- Grid lines (longitude/latitude) -->
-      <g stroke="#00331a" stroke-width="0.5" opacity="0.6">
-        <line x1="0" y1="46" x2="900" y2="46"/>
-        <line x1="0" y1="93" x2="900" y2="93"/>
-        <line x1="0" y1="140" x2="900" y2="140"/>
-        <line x1="0" y1="186" x2="900" y2="186"/>
-        <line x1="0" y1="233" x2="900" y2="233"/>
-        <line x1="100" y1="0" x2="100" y2="280"/>
-        <line x1="200" y1="0" x2="200" y2="280"/>
-        <line x1="300" y1="0" x2="300" y2="280"/>
-        <line x1="400" y1="0" x2="400" y2="280"/>
-        <line x1="500" y1="0" x2="500" y2="280"/>
-        <line x1="600" y1="0" x2="600" y2="280"/>
-        <line x1="700" y1="0" x2="700" y2="280"/>
-        <line x1="800" y1="0" x2="800" y2="280"/>
-      </g>
-
-      <!-- ── CONTINENTS (simplified outlines, teal/dark-green fill) ── -->
-      <!-- North America -->
-      <path d="M95,42 L155,38 L195,48 L210,70 L205,95 L185,118 L165,135 L150,155
-               L130,160 L110,148 L90,130 L75,105 L70,78 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-      <!-- Central America strip -->
-      <path d="M155,155 L165,160 L158,175 L148,172 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.9"/>
-
-      <!-- South America -->
-      <path d="M160,170 L195,165 L220,180 L230,210 L225,240 L205,258
-               L180,262 L160,248 L148,225 L148,200 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-
-      <!-- Greenland -->
-      <path d="M190,18 L215,15 L225,28 L215,40 L195,42 Z"
-            fill="#002d16" stroke="#00c853" stroke-width="0.8" opacity="0.75"/>
-
-      <!-- Europe -->
-      <path d="M380,38 L420,35 L440,45 L445,62 L430,75 L415,80
-               L395,78 L375,68 L370,52 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-      <!-- Scandinavia bump -->
-      <path d="M405,22 L420,18 L425,32 L410,36 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.8"/>
-
-      <!-- Africa -->
-      <path d="M375,85 L415,82 L440,95 L450,120 L448,155 L440,185
-               L420,210 L400,218 L378,208 L362,180 L358,148
-               L360,115 L368,95 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-
-      <!-- Middle East / Arabian Peninsula -->
-      <path d="M452,88 L480,85 L495,98 L492,118 L475,128 L455,120 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1" opacity="0.85"/>
-
-      <!-- Russia / Central Asia (broad) -->
-      <path d="M420,22 L560,18 L610,30 L620,50 L600,65 L560,68
-               L510,62 L460,58 L435,48 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-
-      <!-- India -->
-      <path d="M520,90 L548,88 L558,105 L552,130 L535,148 L518,130 L512,108 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1" opacity="0.85"/>
-
-      <!-- Southeast Asia islands (Indonesia, etc.) -->
-      <path d="M620,140 L650,138 L660,148 L648,158 L625,155 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
-      <path d="M660,148 L690,145 L700,155 L688,163 L662,160 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
-
-      <!-- China / East Asia -->
-      <path d="M565,45 L640,40 L668,55 L672,80 L655,98 L628,105
-               L598,100 L568,88 L555,68 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-
-      <!-- Japan -->
-      <path d="M690,58 L700,54 L708,65 L700,76 L690,70 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.9" opacity="0.8"/>
-
-      <!-- Australia -->
-      <path d="M658,185 L718,180 L745,195 L748,228 L730,248
-               L698,252 L668,240 L652,218 L652,200 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="1.2" opacity="0.9"/>
-      <!-- New Zealand -->
-      <path d="M758,240 L765,235 L770,248 L763,255 Z"
-            fill="#003d1f" stroke="#00c853" stroke-width="0.8" opacity="0.75"/>
-
-      <!-- ── SUPPLY CHAIN RISK HOTSPOTS (glowing dots) ── -->
-      <!-- Shanghai -->
-      <circle cx="668" cy="82" r="5" fill="#00FF41" opacity="0.9">
-        <animate attributeName="r" values="5;9;5" dur="2.2s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2.2s" repeatCount="indefinite"/>
-      </circle>
-      <!-- Rotterdam -->
-      <circle cx="398" cy="52" r="4" fill="#00e5ff" opacity="0.85">
-        <animate attributeName="r" values="4;8;4" dur="2.8s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="2.8s" repeatCount="indefinite"/>
-      </circle>
-      <!-- Los Angeles -->
-      <circle cx="108" cy="112" r="4" fill="#00FF41" opacity="0.85">
-        <animate attributeName="r" values="4;8;4" dur="3.1s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="3.1s" repeatCount="indefinite"/>
-      </circle>
-      <!-- Singapore -->
-      <circle cx="628" cy="152" r="4" fill="#00e5ff" opacity="0.85">
-        <animate attributeName="r" values="4;7;4" dur="2.5s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="2.5s" repeatCount="indefinite"/>
-      </circle>
-      <!-- Dubai -->
-      <circle cx="478" cy="105" r="4" fill="#39ff14" opacity="0.85">
-        <animate attributeName="r" values="4;7;4" dur="3.4s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.85;0.25;0.85" dur="3.4s" repeatCount="indefinite"/>
-      </circle>
-      <!-- Mumbai -->
-      <circle cx="528" cy="118" r="3.5" fill="#00e5ff" opacity="0.8">
-        <animate attributeName="r" values="3.5;7;3.5" dur="2.9s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.9s" repeatCount="indefinite"/>
-      </circle>
-      <!-- New York -->
-      <circle cx="178" cy="88" r="3.5" fill="#00FF41" opacity="0.8">
-        <animate attributeName="r" values="3.5;7;3.5" dur="3.6s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.6s" repeatCount="indefinite"/>
-      </circle>
-      <!-- Karachi -->
-      <circle cx="506" cy="105" r="3" fill="#39ff14" opacity="0.75">
-        <animate attributeName="r" values="3;6;3" dur="2.6s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.75;0.2;0.75" dur="2.6s" repeatCount="indefinite"/>
-      </circle>
-
-      <!-- ── SHIPPING ROUTE LINES ── -->
-      <g stroke="#00c853" stroke-width="0.9" stroke-dasharray="6,4" opacity="0.45" fill="none">
-        <!-- LA to Shanghai -->
-        <path d="M108,112 Q390,60 668,82"/>
-        <!-- Rotterdam to New York -->
-        <path d="M398,52 Q290,40 178,88"/>
-        <!-- Shanghai to Singapore -->
-        <path d="M668,82 Q648,118 628,152"/>
-        <!-- Dubai to Rotterdam -->
-        <path d="M478,105 Q438,78 398,52"/>
-        <!-- Singapore to Australia -->
-        <path d="M628,152 Q645,168 698,210"/>
-        <!-- Mumbai to Dubai -->
-        <path d="M528,118 Q503,112 478,105"/>
-      </g>
-
-      <!-- Equator line -->
-      <line x1="0" y1="158" x2="900" y2="158" stroke="#00FF41" stroke-width="0.6"
-            stroke-dasharray="12,8" opacity="0.25"/>
-
-      <!-- Corner label -->
-      <text x="12" y="270" fill="#00FF41" font-size="9" font-family="monospace"
-            opacity="0.4" letter-spacing="1">GLOBAL SUPPLY CHAIN RISK MAP</text>
-      <text x="820" y="270" fill="#00e5ff" font-size="9" font-family="monospace"
-            opacity="0.35" letter-spacing="1">LIVE</text>
-      <circle cx="812" cy="266" r="3" fill="#00e5ff" opacity="0.5">
-        <animate attributeName="opacity" values="0.5;0.1;0.5" dur="1.5s" repeatCount="indefinite"/>
-      </circle>
-    </svg>
-    </div>
-    """
-
-    col_l, col_c, col_r = st.columns([1, 2.2, 1])
+    col_l, col_c, col_r = st.columns([1, 2, 1])
     with col_c:
         st.markdown('<div class="login-container">', unsafe_allow_html=True)
-
-        # World map banner (inside the green rectangle)
-        st.markdown(WORLD_MAP_SVG, unsafe_allow_html=True)
-
         st.markdown('<div class="login-title">🛡 RISK ENGINE</div>', unsafe_allow_html=True)
         st.markdown(
             '<div class="login-subtitle">Welcome to Supply Chain Risk Engine</div>',
@@ -451,13 +238,6 @@ def render_login_page() -> bool:
             """,
             unsafe_allow_html=True,
         )
-
-        # Powered by footer
-        st.markdown(
-            '<div class="powered-by">Powered by &nbsp;<span>⚡ Ali-datasmith</span></div>',
-            unsafe_allow_html=True,
-        )
-
         st.markdown("</div>", unsafe_allow_html=True)
 
     return False
