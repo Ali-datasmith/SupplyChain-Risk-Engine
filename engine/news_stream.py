@@ -10,11 +10,17 @@ logger = logging.getLogger(__name__)
 
 # ── RSS Feed Sources (Free, No API Key, Streamlit Cloud Compatible) ──────────
 RSS_FEEDS = {
-    "Reuters Supply Chain": "https://feeds.reuters.com/reuters/businessNews",
-    "BBC Business":         "https://feeds.bbci.co.uk/news/business/rss.xml",
-    "Financial Times":      "https://www.ft.com/rss/home/uk",
-    "Supply Chain Dive":    "https://www.supplychaindive.com/feeds/news/",
-    "Logistics MgmtNews":   "https://www.logisticsmgmt.com/rss/news",
+    # ── Core Supply Chain & Logistics ──────────────────────────────────────
+    "Supply Chain Dive":     "https://www.supplychaindive.com/feeds/news/",
+    "Logistics Management":  "https://www.logisticsmgmt.com/rss/news",
+    "FreightWaves":          "https://www.freightwaves.com/news/feed",
+    "DC Velocity":           "https://dcvelocity.com/feed/",
+    # ── Trade, Shipping & Port News ────────────────────────────────────────
+    "JOC (Port/Shipping)":   "https://www.joc.com/rss.xml",
+    "Hellenic Shipping News": "https://www.hellenicshippingnews.com/feed/",
+    # ── Global Trade & Risk ────────────────────────────────────────────────
+    "Reuters Trade":         "https://feeds.reuters.com/reuters/companyNews",
+    "Bloomberg Supply Chain": "https://feeds.bloomberg.com/markets/news.rss",
 }
 
 @st.cache_data(ttl=300)
