@@ -7,6 +7,7 @@ All imports are guarded with try/except to prevent crash on Streamlit Cloud.
 import logging
 import os
 import sys
+import hashlib
 
 import streamlit as st
 import polars as pl
@@ -129,6 +130,119 @@ except Exception as e:
     _PDF_OK = False
 
 
+# ── Login System ──────────────────────────────────────────────────────────────
+VALID_CREDENTIALS = {
+    "Ali-datasmith": hashlib.sha256("SC@Risk#2025!".encode()).hexdigest(),
+}
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def render_login_page() -> bool:
+    """Renders the login page. Returns True if login is successful."""
+    st.markdown(
+        """
+        <style>
+        [data-testid="stAppViewContainer"] {
+            background: linear-gradient(135deg, #0a0a0a 0%, #0d1117 50%, #0a0f1e 100%);
+        }
+        [data-testid="stSidebar"] { display: none; }
+        .login-container {
+            max-width: 420px;
+            margin: 60px auto 0 auto;
+            padding: 40px 36px 36px 36px;
+            background: rgba(0, 255, 65, 0.04);
+            border: 1px solid rgba(0, 255, 65, 0.25);
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.08);
+        }
+        .login-title {
+            text-align: center;
+            color: #00FF41;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            text-shadow: 0 0 20px rgba(0,255,65,0.5);
+        }
+        .login-subtitle {
+            text-align: center;
+            color: rgba(0, 255, 65, 0.6);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+        .login-divider {
+            border: none;
+            border-top: 1px solid rgba(0,255,65,0.15);
+            margin: 24px 0;
+        }
+        .credentials-box {
+            background: rgba(0,255,65,0.05);
+            border: 1px solid rgba(0,255,65,0.2);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-top: 20px;
+            font-size: 0.82rem;
+            color: rgba(0,255,65,0.75);
+        }
+        .credentials-box b { color: #00FF41; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    col_l, col_c, col_r = st.columns([1, 2, 1])
+    with col_c:
+        st.markdown('<div class="login-container">', unsafe_allow_html=True)
+        st.markdown('<div class="login-title">🛡 RISK ENGINE</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="login-subtitle">Welcome to Supply Chain Risk Engine</div>',
+            unsafe_allow_html=True,
+        )
+
+        username = st.text_input(
+            "Username",
+            placeholder="Enter your username",
+            key="login_username",
+        )
+        password = st.text_input(
+            "Password",
+            type="password",
+            placeholder="Enter your password",
+            key="login_password",
+        )
+
+        st.markdown("")
+        login_btn = st.button("🔐  LOGIN", use_container_width=True, type="primary")
+
+        if login_btn:
+            if not username or not password:
+                st.error("⚠️ Please enter both username and password.")
+            elif username in VALID_CREDENTIALS and hash_password(password) == VALID_CREDENTIALS[username]:
+                st.session_state["authenticated"] = True
+                st.session_state["logged_in_user"] = username
+                st.rerun()
+            else:
+                st.error("❌ Invalid username or password.")
+
+        st.markdown('<hr class="login-divider">', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="credentials-box">
+            🔑 <b>Login Credentials</b><br><br>
+            <b>Username:</b> Ali-datasmith<br>
+            <b>Password:</b> SC@Risk#2025!
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    return False
+
+
 # ── Session State ─────────────────────────────────────────────────────────────
 def _init_session_state() -> None:
     defaults = {
@@ -136,6 +250,8 @@ def _init_session_state() -> None:
         "page": "Dashboard",
         "news_df": pl.DataFrame(),
         "sim_df": pl.DataFrame(),
+        "authenticated": False,
+        "logged_in_user": "",
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -145,6 +261,7 @@ def _init_session_state() -> None:
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 def render_sidebar() -> None:
     st.sidebar.title("🛡 RISK ENGINE")
+    st.sidebar.markdown(f"👤 `{st.session_state.get('logged_in_user', '')}`")
     st.sidebar.markdown("---")
 
     uploaded_file = st.sidebar.file_uploader("📂 Upload Suppliers CSV", type=["csv"])
@@ -194,6 +311,12 @@ def render_sidebar() -> None:
     }
     for module, ok in status_flags.items():
         st.sidebar.markdown(f"{'🟢' if ok else '🔴'} `{module}`")
+
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🚪 Logout", use_container_width=True):
+        st.session_state["authenticated"] = False
+        st.session_state["logged_in_user"] = ""
+        st.rerun()
 
 
 # ── Page: Dashboard ───────────────────────────────────────────────────────────
@@ -661,6 +784,13 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
     _init_session_state()
+
+    # ── Authentication Gate ───────────────────────────────────────────────────
+    if not st.session_state.get("authenticated", False):
+        render_login_page()
+        st.stop()
+
+    # ── Authenticated: normal app flow ────────────────────────────────────────
     if _THEME_OK:
         try:
             apply_theme()
