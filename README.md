@@ -1,117 +1,184 @@
 # 🛡️ Global Supply Chain Risk Engine
 
-> **A real-time, AI-powered supply chain risk monitoring dashboard built with Python, Streamlit, Polars, DuckDB, and Plotly.**
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.31-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![Polars](https://img.shields.io/badge/Polars-0.20-CD792C?style=for-the-badge&logo=polars&logoColor=white)
+![DuckDB](https://img.shields.io/badge/DuckDB-0.10-FFF000?style=for-the-badge&logo=duckdb&logoColor=black)
+![Plotly](https://img.shields.io/badge/Plotly-5.18-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-00FF41?style=for-the-badge)
+
+**A real-time, enterprise-grade supply chain risk monitoring platform — built entirely with open-source Python tools, deployed on the cloud, and protected with secure authentication.**
+
+[🚀 Live Demo](https://your-app.streamlit.app) &nbsp;•&nbsp; [📂 Repository](https://github.com/Ali-datasmith/SupplyChain-Risk-Engine)
+
+</div>
 
 ---
 
-## 📸 App Screenshot
+## 📸 Application Preview
 
 <!-- ============================================================
-     EDIT ZONE 1 — Replace this block with your app screenshot
-     Example: ![App Screenshot](assets/screenshot.png)
+     EDIT ZONE 1 — Paste your login screen screenshot below
+     Example: ![Login Screen](assets/login.png)
      ============================================================ -->
 
-> 🖼️ **[ PASTE YOUR APP SCREENSHOT HERE ]**
+> 🖼️ **[ PASTE LOGIN SCREEN SCREENSHOT HERE ]**
 
 ---
 
-## 🎬 Demo Video
+## 🎬 Full Demo
 
 <!-- ============================================================
-     EDIT ZONE 2 — Replace this block with your demo video
-     For YouTube: [![Demo Video](thumbnail.png)](https://youtube.com/your-link)
-     For GIF:     ![Demo GIF](assets/demo.gif)
+     EDIT ZONE 2 — Paste your demo video or GIF below
+     YouTube: [![Watch Demo](assets/thumb.png)](https://youtube.com/your-link)
+     GIF:     ![Demo](assets/demo.gif)
      ============================================================ -->
 
-> 🎥 **[ PASTE YOUR DEMO VIDEO / GIF HERE ]**
+> 🎥 **[ PASTE DEMO VIDEO / GIF HERE ]**
 
 ---
 
-## 🌐 Live App
+## 💡 What Is This?
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://supplychain-risk-engine-r8djbttt6eah48khhsfcze.streamlit.app/)
+The **Global Supply Chain Risk Engine** is a full-stack data intelligence platform that helps procurement teams, logistics managers, and risk analysts **identify, monitor, and simulate supply chain disruptions — before they happen.**
 
----
+Unlike generic BI dashboards, this engine combines:
 
-## 📋 Table of Contents
+- **Real-time news intelligence** from 8 industry-specific RSS feeds
+- **Live weather risk scoring** along shipping routes via Open-Meteo
+- **Dynamic risk modeling** using financial, geopolitical, and delay factors
+- **What-if scenario simulation** for disruption planning
+- **One-click PDF audit reports** for executive stakeholders
+- **Secure SHA-256 login system** — no plain-text passwords, ever
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [CSV Format](#-csv-format)
-- [Module Breakdown](#-module-breakdown)
-- [Deployment](#-deployment)
-- [License](#-license)
+All of this runs on **Streamlit Community Cloud — completely free to host.**
 
 ---
 
-## 🔍 Overview
+## ✨ Feature Breakdown
 
-The **Global Supply Chain Risk Engine** is a professional-grade dashboard that ingests supplier data, computes multi-dimensional risk scores, visualizes global exposure on an interactive world map, and generates automated PDF audit reports — all in real time.
+### 🔐 Secure Access Terminal
+A professional neon-themed login screen protects the entire application. Credentials are SHA-256 hashed with a cryptographic salt. No plain-text passwords stored anywhere in the codebase. Built for single-tenant or multi-client deployment.
 
-It is designed to help procurement teams, risk analysts, and supply chain managers identify critical vulnerabilities before they become disruptions.
+### 📊 Executive Risk Dashboard
+The command center of the application. Upload any supplier CSV and instantly see:
 
----
+- Average risk score across your entire supplier network
+- Count of high-risk suppliers (score > 75)
+- Statistical anomaly detection via Z-score analysis
+- Risk score distribution histogram
+- Top 10 highest-risk suppliers via live DuckDB SQL query
 
-## ✨ Features
+### 🌍 Global Risk Heatmap
+An interactive Plotly scatter-geo world map that plots every supplier by geographic coordinates, sized and colored by risk score. Instantly visualize where your supply chain is most exposed — from APAC manufacturing hubs to Middle East trade corridors.
 
-| Feature | Description |
+### 📡 Supply Chain Intelligence Feed
+Live news pulled from 8 industry-specific RSS sources — zero API keys required:
+
+| Source | Coverage |
 |---|---|
-| 📊 **Executive Dashboard** | KPI metrics, risk score distribution, DuckDB-powered top-risk queries |
-| 🌍 **Live Risk Heatmap** | Scatter-geo world map showing supplier locations colored by risk severity |
-| 📡 **Intelligence Feed** | Real-time global disruption news via the GDELT Project API |
-| ⚗️ **Scenario Simulator** | What-if analysis: region disruption multiplier, inventory shortfall calculator, lead time projector |
-| 📄 **Automated PDF Report** | One-click executive PDF with risk statistics and critical supplier table |
-| 🚨 **Anomaly Alerts** | Z-score based statistical anomaly detection with banner alerts |
-| 🔌 **Module Status Panel** | Live sidebar showing which modules loaded successfully on Streamlit Cloud |
+| Supply Chain Dive | Industry operations & disruptions |
+| Logistics Management | Warehousing, freight, 3PL |
+| FreightWaves | Freight markets & trucking |
+| DC Velocity | Distribution & materials handling |
+| JOC | Port & container shipping |
+| Hellenic Shipping News | Global maritime intelligence |
+| Reuters Trade | Global trade & commerce |
+| Bloomberg Supply Chain | Financial & market risk |
+
+Filter by source, search by keyword (`tariff`, `port strike`, `logistics`), and read full articles directly from the dashboard in expandable cards.
+
+### ⚗️ Risk Scenario Simulator
+A three-part what-if analysis engine for proactive risk planning:
+
+**Region Disruption Simulator** — Select any region and apply a disruption intensity multiplier (1x–5x). See a live bar chart comparing baseline vs simulated risk scores across your entire supplier network.
+
+**Inventory Impact Calculator** — Input current stock, daily demand, and lead time to compute days-of-cover and shortfall probability with a color-coded risk banner.
+
+**Lead Time Projector** — Model the combined effect of port congestion index and active labor strikes on expected delivery timelines.
+
+### 🌦️ Shipping Route Weather Monitor
+Powered by Open-Meteo — completely free, no API key, no credit card. Select any supplier from your dataset and get:
+
+- Current temperature, wind speed, and precipitation probability
+- Shipping risk classification: 🟢 LOW → 🟡 MODERATE → 🟠 HIGH → 🔴 SEVERE
+- 24-hour wind speed forecast (line chart)
+- 24-hour precipitation probability (color-coded bar chart)
+
+### 📄 Automated PDF Risk Report
+One-click generation of a professional audit-ready PDF containing:
+
+- Customizable executive summary
+- Risk statistics (average, min, max scores across all suppliers)
+- Critical supplier table (auto-filtered at risk score > 50)
+- Auto-detects column names from any CSV schema — no manual mapping
+
+---
+
+## 🧠 Risk Scoring Model
+
+Each supplier receives a **composite risk score (0–100)** from three weighted components:
+
+```
+Total Risk = (Geo Risk × 0.40) + (Delay Risk × 0.30) + (Financial Risk × 0.30)
+```
+
+| Component | Methodology | Weight |
+|---|---|---|
+| **Geo Risk** | Logistic growth curve over event density × regional sensitivity coefficient | 40% |
+| **Delay Risk** | Lead time volatility model: avg delay days + historical variance | 30% |
+| **Financial Risk** | Log-scaled revenue exposure + supplier health penalty (1 − rating) | 30% |
+
+Scores normalize to 0–100 via Min-Max scaling and classify into tiers:
+`LOW (0–25)` → `MEDIUM (26–50)` → `HIGH (51–75)` → `CRITICAL (76–100)`
+
+---
+
+## 🏗️ Project Architecture
+
+```
+ROOT/
+├── app.py                    ← Main entry point + SHA-256 login gate
+├── theme.py                  ← Neon/terminal CSS theme + Plotly dark layout
+├── requirements.txt
+│
+├── engine/
+│   ├── ingest.py             ← CSV loader, schema auto-detection, GDELT
+│   ├── news_stream.py        ← RSS intelligence feed + Open-Meteo weather
+│   ├── risk_model.py         ← Geo, delay & financial risk scoring engine
+│   └── scenario_sim.py       ← Disruption simulator, inventory & lead time calc
+│
+├── database/
+│   └── risk_queries.py       ← DuckDB in-memory SQL analytics layer
+│
+├── components/
+│   ├── alerts.py             ← Z-score anomaly detection & alert banners
+│   ├── map_viz.py            ← Scatter-geo & choropleth map builders
+│   └── views.py              ← Page-level UI components
+│
+├── utils/
+│   └── pdf_gen.py            ← FPDF2 professional report generator
+│
+└── data/
+    └── suppliers.csv         ← Sample dataset (50 global suppliers)
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Component | Technology |
-|---|---|
-| **UI Framework** | [Streamlit](https://streamlit.io) |
-| **Data Engine** | [Polars](https://pola.rs) + [DuckDB](https://duckdb.org) |
-| **Visualizations** | [Plotly](https://plotly.com/python/) |
-| **News Intelligence** | [GDELT Project API](https://www.gdeltproject.org/) (Free) |
-| **Weather Alerts** | [OpenWeatherMap API](https://openweathermap.org/api) (Free Tier) |
-| **PDF Generation** | [FPDF2](https://py-fpdf2.readthedocs.io/) |
-| **Language** | Python 3.11 |
-| **Deployment** | Streamlit Community Cloud (Free Tier) |
-
----
-
-## 📁 Project Structure
-
-```
-ROOT/
-├── app.py                    ← Main entry point
-├── theme.py                  ← Neon/terminal CSS theme + Plotly layout
-├── requirements.txt
-│
-├── engine/
-│   ├── ingest.py             ← CSV loader, GDELT fetcher, schema detector
-│   ├── news_stream.py        ← Real-time disruption event stream
-│   ├── risk_model.py         ← Geo, delay & financial risk scoring
-│   └── scenario_sim.py       ← Disruption simulator & inventory calculator
-│
-├── database/
-│   └── risk_queries.py       ← DuckDB in-memory queries
-│
-├── components/
-│   ├── alerts.py             ← Anomaly detection & banner alerts
-│   ├── map_viz.py            ← Scatter-geo & choropleth map builders
-│   └── views.py              ← Page-level UI components
-│
-├── utils/
-│   └── pdf_gen.py            ← PDF report generator (FPDF2)
-│
-└── data/
-    └── suppliers.csv         ← Sample supplier dataset
-```
+| Layer | Technology | Reason |
+|---|---|---|
+| **UI & Hosting** | Streamlit 1.31 | Rapid deployment, free cloud tier |
+| **Data Engine** | Polars 0.20 | 10–100x faster than Pandas on large CSVs |
+| **Analytics** | DuckDB 0.10 | In-memory SQL on DataFrames, zero setup |
+| **Visualization** | Plotly 5.18 | Interactive geo maps, charts, hover tooltips |
+| **News Feed** | RSS feeds (8 sources) | Free, reliable, no API key required |
+| **Weather** | Open-Meteo API | 100% free, no registration needed |
+| **PDF Export** | FPDF2 2.7 | Lightweight professional PDF generation |
+| **Security** | SHA-256 + Salt | Industry-standard password hashing |
 
 ---
 
@@ -120,8 +187,8 @@ ROOT/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/supply-chain-risk-engine.git
-cd supply-chain-risk-engine
+git clone https://github.com/Ali-datasmith/SupplyChain-Risk-Engine.git
+cd SupplyChain-Risk-Engine
 ```
 
 ### 2. Install dependencies
@@ -130,88 +197,83 @@ cd supply-chain-risk-engine
 pip install -r requirements.txt
 ```
 
-### 3. Add API keys (optional)
-
-Create a `.streamlit/secrets.toml` file:
-
-```toml
-OPENWEATHER_API_KEY = "your_openweathermap_key_here"
-```
-
-> The app runs fully without API keys — weather alerts will be disabled but all other features work normally.
-
-### 4. Run the app
+### 3. Run locally
 
 ```bash
 streamlit run app.py
+```
+
+### 4. Login
+
+```
+Username : Ali-datasmith
+Password : Contact the developer
 ```
 
 ---
 
 ## 📄 CSV Format
 
-Upload any CSV with the following columns (column names are **case-insensitive**):
+The engine accepts **any CSV format** — column names are auto-detected and normalized at upload time:
 
-| Column | Required | Aliases Accepted |
+| Column | Required | Accepted Aliases |
 |---|---|---|
-| `supplier` / `supplier_name` | ✅ Yes | `vendor`, `name`, `company` |
-| `risk_score` / `Risk_Score` | ✅ Yes | `risk`, `score`, `rating` |
-| `region` / `Supplier_Region` | ⚪ Recommended | `country`, `area`, `zone` |
-| `lat` | ⚪ For Map | `latitude`, `y` |
-| `lon` | ⚪ For Map | `longitude`, `lng`, `x` |
+| `supplier` | ✅ Yes | `supplier_name`, `vendor`, `name`, `company` |
+| `risk_score` | ✅ Yes | `Risk_Score`, `risk`, `score`, `rating` |
+| `region` | ⭐ Recommended | `Supplier_Region`, `country`, `area`, `zone` |
+| `lat` | 🗺️ Map only | `latitude`, `y` |
+| `lon` | 🗺️ Map only | `longitude`, `lng`, `x` |
 
-**Sample row:**
-```
-supplier_name,Supplier_Region,lat,lon,Risk_Score
-Palmer Gray and Williams,MIDDLE_EAST,25.2,55.3,100
-```
+Extra columns (`industry`, `lead_time_days`, `financial_score`, `reliability_score`, `inventory_value`) are automatically used where applicable.
 
 ---
 
-## 🧩 Module Breakdown
+## 💼 Real-World Use Cases
 
-### `engine/risk_model.py`
-Computes a **composite risk score (0–100)** using three weighted components:
+**Procurement Teams** — Identify which suppliers pose the highest risk before contract renewal. Prioritize audits based on data, not gut feeling.
 
-```
-Total Risk = (Geo Risk × 0.4) + (Delay Risk × 0.3) + (Financial Risk × 0.3)
-```
+**Logistics Managers** — Monitor live weather risk along shipping routes. Get early warnings before a typhoon or port strike disrupts your network.
 
-- **Geo Risk** — logistic curve over event density × regional sensitivity
-- **Delay Risk** — lead time volatility model
-- **Financial Risk** — log-scaled revenue exposure + supplier health penalty
+**Risk & Compliance Officers** — Generate audit-ready PDF reports with one click. Present executive summaries to leadership without manual data preparation.
 
-### `engine/scenario_sim.py`
-- `simulate_disruption()` — applies a multiplier to risk scores in affected regions
-- `calc_inventory_impact()` — computes days-of-cover and shortfall probability
-- `project_lead_time_change()` — models port congestion + labor strike impact
+**Investment Analysts** — Model supply chain exposure for portfolio companies. Run what-if scenarios on geopolitical disruptions — Red Sea conflict, China tariffs, labor strikes.
 
-### `database/risk_queries.py`
-Runs parameterized SQL via **DuckDB in-memory** engine on top of Polars DataFrames. No external database required.
+**Consulting Firms** — White-label this platform for clients. Deploy a branded version within hours with custom supplier datasets.
 
-### `utils/pdf_gen.py`
-Auto-detects column names from any CSV schema. Generates a 2-page PDF with executive summary, risk statistics, and a critical supplier table filtered at `risk_score > 50`.
+---
+
+## 📈 Growth Roadmap
+
+The modular architecture makes the following extensions straightforward:
+
+- **Multi-tenant SaaS** — Per-client login with isolated data views
+- **ERP Integration** — Connect to SAP, Oracle, or NetSuite via REST API
+- **ML Risk Prediction** — Train a gradient boosting model on historical disruptions
+- **Real-time Alerts** — Email/Slack notifications when risk scores cross thresholds
+- **Supplier Benchmarking** — Peer comparison within same region or industry
+- **Mobile Responsive UI** — Progressive Web App for field use
 
 ---
 
 ## ☁️ Deployment
 
-This app is optimized for **Streamlit Community Cloud (Free Tier)**:
+Optimized for **Streamlit Community Cloud (Free Tier)**:
 
-- ✅ In-memory only — no persistent storage required
-- ✅ RAM usage stays under 1 GB for typical datasets (< 100k rows)
-- ✅ All modules have graceful fallbacks if imports fail on Cloud
-- ✅ API keys managed via Streamlit Secrets
+- ✅ In-memory only — no persistent database or file system needed
+- ✅ All modules have graceful fallbacks if imports fail on cold start
+- ✅ RAM usage stays under 1 GB for datasets up to 100,000 rows
+- ✅ No API keys required for any core feature
 
-To deploy:
-1. Push your repo to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your repo and set `app.py` as the entry point
-4. Add `OPENWEATHER_API_KEY` under **Secrets** (optional)
+```
+1. Push repository to GitHub
+2. Go to share.streamlit.io
+3. Connect repository → set app.py as entry point
+4. Click Deploy — live in 60 seconds
+```
 
 ---
 
-## 📦 Requirements
+## 📦 Dependencies
 
 ```
 streamlit==1.31.1
@@ -226,13 +288,32 @@ pillow==10.2.0
 
 ---
 
-## 📜 License
+## 👨‍💻 About the Developer
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+Built by **Ali-datasmith** — a data engineer specializing in supply chain analytics, real-time intelligence dashboards, and Python-based risk platforms.
+
+**Open to:**
+- Freelance projects — Upwork / Direct contract
+- Consulting engagements for logistics & procurement firms
+- Full-time Data Engineering / Analytics Engineering roles
+
+📧 rjptmhmmd@gmail.com
+🔗 [GitHub Profile](https://github.com/Ali-datasmith)
 
 ---
 
-<p align="center">
-  Built with ⚡ by <strong>Ali-datasmith</strong> &nbsp;|&nbsp;
-  Powered by Streamlit · Polars · DuckDB · Plotly
-</p>
+## 📜 License
+
+MIT License — free to use, modify, and distribute with attribution.
+
+---
+
+<div align="center">
+
+**⚡ Built by Ali-datasmith**
+
+*Polars · DuckDB · Streamlit · Plotly · Open-Meteo · FPDF2*
+
+*"From raw supplier data to executive risk intelligence — in seconds."*
+
+</div>
