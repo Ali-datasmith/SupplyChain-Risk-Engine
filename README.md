@@ -24,7 +24,8 @@
      Example: ![Login Screen](assets/login.png)
      ============================================================ -->
 
-> 🖼️ **[ PASTE LOGIN SCREEN SCREENSHOT HERE ]**
+> 🖼️ **[<img width="1365" height="676" alt="Screenshot 2026-05-18 11 15 54 PM" src="https://github.com/user-attachments/assets/eebbb5cb-0b63-495e-a2e0-82ffa7f37f03" />
+]**
 
 ---
 
@@ -36,7 +37,7 @@
      GIF:     ![Demo](assets/demo.gif)
      ============================================================ -->
 
-> 🎥 **[ PASTE DEMO VIDEO / GIF HERE ]**
+> 🎥 **[https://youtu.be/YPKMSlY0WLg]**
 
 ---
 
