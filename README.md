@@ -11,7 +11,7 @@
 
 **A real-time, enterprise-grade supply chain risk monitoring platform — built entirely with open-source Python tools, deployed on the cloud, and protected with secure authentication.**
 
-[🚀 Live Demo](https://your-app.streamlit.app) &nbsp;•&nbsp; [📂 Repository](https://github.com/Ali-datasmith/SupplyChain-Risk-Engine)
+[🚀 Live Demo](https://supplychain-risk-engine-r8djbttt6eah48khhsfcze.streamlit.app/) &nbsp;•&nbsp; [📂 Repository](https://github.com/Ali-datasmith/SupplyChain-Risk-Engine)
 
 </div>
 
