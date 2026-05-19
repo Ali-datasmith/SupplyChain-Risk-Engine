@@ -37,7 +37,7 @@
      GIF:     ![Demo](assets/demo.gif)
      ============================================================ -->
 
-> 🎥 **[https://youtu.be/YPKMSlY0WLg]**
+> 🎥 **[https://youtu.be/rYTDYH3ZAt4]**
 
 ---
 
