@@ -7,7 +7,6 @@ All imports are guarded with try/except to prevent crash on Streamlit Cloud.
 import logging
 import os
 import sys
-import hashlib
 
 import streamlit as st
 import polars as pl
@@ -23,7 +22,6 @@ if ROOT not in sys.path:
 
 # ── Internal imports (all guarded) ───────────────────────────────────────────
 
-# theme.py
 try:
     from theme import apply_theme, get_plotly_layout
     _THEME_OK = True
@@ -31,20 +29,15 @@ except Exception as e:
     logger.warning(f"theme.py import failed: {e}")
     _THEME_OK = False
 
-# components/views.py
 try:
     from components.views import (
-        show_risk_overview,
-        show_map_view,
-        show_news_feed,
-        show_scenario_page,
+        show_risk_overview, show_map_view, show_news_feed, show_scenario_page,
     )
     _VIEWS_OK = True
 except Exception as e:
     logger.warning(f"components/views.py import failed: {e}")
     _VIEWS_OK = False
 
-# engine/ingest.py
 try:
     from engine.ingest import load_csv, fetch_gdelt, detect_schema
     _INGEST_OK = True
@@ -52,13 +45,9 @@ except Exception as e:
     logger.warning(f"engine/ingest.py import failed: {e}")
     _INGEST_OK = False
 
-# engine/news_stream.py
 try:
     from engine.news_stream import (
-        get_disruption_events,
-        filter_by_region,
-        fetch_weather_open_meteo,
-        parse_weather_risk,
+        get_disruption_events, filter_by_region, fetch_weather_open_meteo, parse_weather_risk,
     )
     _NEWS_OK = True
     _WEATHER_OK = True
@@ -67,7 +56,6 @@ except Exception as e:
     _NEWS_OK = False
     _WEATHER_OK = False
 
-# engine/risk_model.py
 try:
     from engine.risk_model import compute_risk_score
     _RISK_MODEL_OK = True
@@ -75,45 +63,34 @@ except Exception as e:
     logger.warning(f"engine/risk_model.py import failed: {e}")
     _RISK_MODEL_OK = False
 
-# engine/scenario_sim.py
 try:
     from engine.scenario_sim import (
-        simulate_disruption,
-        calc_inventory_impact,
-        project_lead_time_change,
+        simulate_disruption, calc_inventory_impact, project_lead_time_change,
     )
     _SIM_OK = True
 except Exception as e:
     logger.warning(f"engine/scenario_sim.py import failed: {e}")
     _SIM_OK = False
 
-# database/risk_queries.py
 try:
     import duckdb
     from database.risk_queries import (
-        init_db,
-        query_by_region,
-        query_top_risk_suppliers,
-        query_monthly_trend,
+        init_db, query_by_region, query_top_risk_suppliers, query_monthly_trend,
     )
     _DB_OK = True
 except Exception as e:
     logger.warning(f"database/risk_queries.py import failed: {e}")
     _DB_OK = False
 
-# components/alerts.py
 try:
     from components.alerts import (
-        detect_anomalies,
-        get_critical_suppliers,
-        render_alert_banner,
+        detect_anomalies, get_critical_suppliers, render_alert_banner,
     )
     _ALERTS_OK = True
 except Exception as e:
     logger.warning(f"components/alerts.py import failed: {e}")
     _ALERTS_OK = False
 
-# components/map_viz.py
 try:
     from components.map_viz import build_scatter_geo, build_choropleth, add_risk_zones
     _MAP_OK = True
@@ -121,126 +98,12 @@ except Exception as e:
     logger.warning(f"components/map_viz.py import failed: {e}")
     _MAP_OK = False
 
-# utils/pdf_gen.py
 try:
     from utils.pdf_gen import generate_report
     _PDF_OK = True
 except Exception as e:
     logger.warning(f"utils/pdf_gen.py import failed: {e}")
     _PDF_OK = False
-
-
-# ── Login System ──────────────────────────────────────────────────────────────
-VALID_CREDENTIALS = {
-    "Ali-datasmith": hashlib.sha256("SC@Risk#2025!".encode()).hexdigest(),
-}
-
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def render_login_page() -> bool:
-    """Renders the login page. Returns True if login is successful."""
-    st.markdown(
-        """
-        <style>
-        [data-testid="stAppViewContainer"] {
-            background: linear-gradient(135deg, #0a0a0a 0%, #0d1117 50%, #0a0f1e 100%);
-        }
-        [data-testid="stSidebar"] { display: none; }
-        .login-container {
-            max-width: 420px;
-            margin: 60px auto 0 auto;
-            padding: 40px 36px 36px 36px;
-            background: rgba(0, 255, 65, 0.04);
-            border: 1px solid rgba(0, 255, 65, 0.25);
-            border-radius: 16px;
-            box-shadow: 0 0 40px rgba(0, 255, 65, 0.08);
-        }
-        .login-title {
-            text-align: center;
-            color: #00FF41;
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-            text-shadow: 0 0 20px rgba(0,255,65,0.5);
-        }
-        .login-subtitle {
-            text-align: center;
-            color: rgba(0, 255, 65, 0.6);
-            font-size: 0.85rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 32px;
-        }
-        .login-divider {
-            border: none;
-            border-top: 1px solid rgba(0,255,65,0.15);
-            margin: 24px 0;
-        }
-        .credentials-box {
-            background: rgba(0,255,65,0.05);
-            border: 1px solid rgba(0,255,65,0.2);
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin-top: 20px;
-            font-size: 0.82rem;
-            color: rgba(0,255,65,0.75);
-        }
-        .credentials-box b { color: #00FF41; }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    col_l, col_c, col_r = st.columns([1, 2, 1])
-    with col_c:
-        st.markdown('<div class="login-container">', unsafe_allow_html=True)
-        st.markdown('<div class="login-title">🛡 RISK ENGINE</div>', unsafe_allow_html=True)
-        st.markdown(
-            '<div class="login-subtitle">Welcome to Supply Chain Risk Engine</div>',
-            unsafe_allow_html=True,
-        )
-
-        username = st.text_input(
-            "Username",
-            placeholder="Enter your username",
-            key="login_username",
-        )
-        password = st.text_input(
-            "Password",
-            type="password",
-            placeholder="Enter your password",
-            key="login_password",
-        )
-
-        st.markdown("")
-        login_btn = st.button("🔐  LOGIN", use_container_width=True, type="primary")
-
-        if login_btn:
-            if not username or not password:
-                st.error("⚠️ Please enter both username and password.")
-            elif username in VALID_CREDENTIALS and hash_password(password) == VALID_CREDENTIALS[username]:
-                st.session_state["authenticated"] = True
-                st.session_state["logged_in_user"] = username
-                st.rerun()
-            else:
-                st.error("❌ Invalid username or password.")
-
-        st.markdown('<hr class="login-divider">', unsafe_allow_html=True)
-        st.markdown(
-            """
-            <div class="credentials-box">
-            🔑 <b>Login Credentials</b><br><br>
-            <b>Username:</b> Ali-datasmith<br>
-            <b>Password:</b> SC@Risk#2025!
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    return False
 
 
 # ── Session State ─────────────────────────────────────────────────────────────
@@ -250,8 +113,6 @@ def _init_session_state() -> None:
         "page": "Dashboard",
         "news_df": pl.DataFrame(),
         "sim_df": pl.DataFrame(),
-        "authenticated": False,
-        "logged_in_user": "",
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -261,7 +122,6 @@ def _init_session_state() -> None:
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 def render_sidebar() -> None:
     st.sidebar.title("🛡 RISK ENGINE")
-    st.sidebar.markdown(f"👤 `{st.session_state.get('logged_in_user', '')}`")
     st.sidebar.markdown("---")
 
     uploaded_file = st.sidebar.file_uploader("📂 Upload Suppliers CSV", type=["csv"])
@@ -312,12 +172,6 @@ def render_sidebar() -> None:
     for module, ok in status_flags.items():
         st.sidebar.markdown(f"{'🟢' if ok else '🔴'} `{module}`")
 
-    st.sidebar.markdown("---")
-    if st.sidebar.button("🚪 Logout", use_container_width=True):
-        st.session_state["authenticated"] = False
-        st.session_state["logged_in_user"] = ""
-        st.rerun()
-
 
 # ── Page: Dashboard ───────────────────────────────────────────────────────────
 def page_dashboard(data: pl.DataFrame) -> None:
@@ -347,14 +201,8 @@ def page_dashboard(data: pl.DataFrame) -> None:
     if _DB_OK and not data.is_empty():
         st.subheader("🗄 Top Risk Suppliers (DuckDB Query)")
         try:
-            con = duckdb.connect(":memory:")
-            con.register("risk_data_view", data.to_pandas())
-            score_col = "risk_score" if "risk_score" in data.columns else data.columns[0]
-            sup_col   = "supplier"   if "supplier"   in data.columns else data.columns[0]
-            top_df = con.execute(
-                f"SELECT {sup_col} AS supplier_name, {score_col} AS risk_score "
-                f"FROM risk_data_view ORDER BY {score_col} DESC LIMIT 10"
-            ).pl()
+            from database.risk_queries import query_top_risk_suppliers
+            top_df = query_top_risk_suppliers(10, data)
             st.dataframe(top_df, use_container_width=True)
         except Exception as e:
             logger.error(f"DuckDB query error: {e}")
@@ -785,12 +633,6 @@ def main() -> None:
     )
     _init_session_state()
 
-    # ── Authentication Gate ───────────────────────────────────────────────────
-    if not st.session_state.get("authenticated", False):
-        render_login_page()
-        st.stop()
-
-    # ── Authenticated: normal app flow ────────────────────────────────────────
     if _THEME_OK:
         try:
             apply_theme()
