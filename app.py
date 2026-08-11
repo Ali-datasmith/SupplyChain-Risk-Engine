@@ -72,15 +72,21 @@ except Exception as e:
     logger.warning(f"engine/scenario_sim.py import failed: {e}")
     _SIM_OK = False
 
+_DB_ERROR = ""
 try:
     import duckdb
+except Exception as e:
+    duckdb = None
+    _DB_ERROR = f"duckdb import: {e}"
+try:
     from database.risk_queries import (
         init_db, query_by_region, query_top_risk_suppliers, query_monthly_trend,
     )
-    _DB_OK = True
+    _DB_OK = not _DB_ERROR
 except Exception as e:
-    logger.warning(f"database/risk_queries.py import failed: {e}")
     _DB_OK = False
+    _DB_ERROR = f"risk_queries import: {e}"
+    logger.warning(f"database/risk_queries.py import failed: {e}")
 
 try:
     from components.alerts import (
@@ -170,7 +176,10 @@ def render_sidebar() -> None:
         "PDF": _PDF_OK, "News": _NEWS_OK, "Weather": _WEATHER_OK,
     }
     for module, ok in status_flags.items():
-        st.sidebar.markdown(f"{'🟢' if ok else '🔴'} `{module}`")
+        line = f"{'🟢' if ok else '🔴'} `{module}`"
+        if module == "Database" and not ok and _DB_ERROR:
+            line += f" — `{_DB_ERROR}`"
+        st.sidebar.markdown(line)
 
 
 # ── Page: Dashboard ───────────────────────────────────────────────────────────
