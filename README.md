@@ -15,7 +15,7 @@ SupplyChain-Risk-Engine ingests supplier CSVs, computes a weighted geo/delay/fin
 <!-- LOOM PLACEHOLDER: replace the URL below with your Loom share link -->
 [▶ Watch the 1-minute walkthrough on Loom](https://github.com/user-attachments/assets/a28214a2-0373-47f7-9693-3182a69ed601)
 
-Live instance: [supplychain-risk-engine-r8djbttt6eah48khhsfcze.streamlit.app](https://supplychain-risk-engine-r8djbttt6eah48khhsfcze.streamlit.app/)
+Live instance: [supplychain-risk-engine-r8djbttt6eah48khhsfcze.streamlit.app](https://supplychain-risk-engine-hkgbn3bguljkjbrdxhnkyl.streamlit.app/)
 
 ## Tech Stack
 
