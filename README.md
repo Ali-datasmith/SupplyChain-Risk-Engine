@@ -25,10 +25,9 @@ Live instance: [supplychain-risk-engine-r8djbttt6eah48khhsfcze.streamlit.app](ht
 | Analytics | DuckDB | In-process SQL for dashboard and Top-10 supplier queries |
 | UI | Streamlit | Single-file app framework, deployable to Streamlit Community Cloud |
 | Visualization | Plotly | Scatter-geo heatmap and scenario/weather charts |
-| Reporting | FPDF2 | Executive PDF generation with column auto-detection |
+| Reporting | FPDF2 + Pillow | Executive PDF generation (Pillow is FPDF2's rendering backend) |
 | HTTP | Requests | RSS feed retrieval and Open-Meteo API calls |
 | Numerics | NumPy | Z-score anomaly detection and risk math |
-| Imaging | Pillow | Image handling for report/UI assets |
 
 ## Features
 
